@@ -1,0 +1,218 @@
+body {
+  width: 250px;
+  padding: 15px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  text-align: center;
+  background-color: #f9f9f9;
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+}
+
+h2 {
+  color: #333;
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.toggle-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.toggle-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.toggle-btn.on {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.toggle-btn.on:hover:not(:disabled) {
+  background-color: #3e8e41;
+}
+
+.toggle-btn.off {
+  background-color: #f44336;
+  color: white;
+}
+
+.toggle-btn.off:hover:not(:disabled) {
+  background-color: #d32f2f;
+}
+
+.server-info {
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  text-align: left;
+}
+
+.server-info p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 13px;
+}
+
+.server-info strong {
+  color: #333;
+}
+
+.create-account {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  display: block;
+  padding: 8px 0;
+  transition: color 0.2s;
+}
+
+.create-account:hover {
+  color: #0d5bba;
+  text-decoration: underline;
+}
+
+.loading {
+  margin: 10px 0;
+  font-size: 12px;
+  color: #666;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Добавляем адаптивность для разных размеров */
+@media (max-width: 280px) {
+  body {
+    padding: 10px;
+    width: 220px;
+  }
+  
+  h2 {
+    font-size: 16px;
+  }
+}
+
+
+/* Стили для формы авторизации */
+.auth-btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+    .auth-btn:hover {
+        background-color: #3367d6;
+    }
+
+.auth-link {
+    display: block;
+    text-align: center;
+    color: #4285f4;
+    text-decoration: none;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+
+.login-form {
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+.submit-btn {
+    background-color: #34a853;
+    margin-top: 5px;
+}
+
+    .submit-btn:hover {
+        background-color: #2d8e47;
+    }
+
+.back-btn {
+    background-color: #fbbc05;
+    margin-top: 5px;
+}
+
+    .back-btn:hover {
+        background-color: #e6ac00;
+    }
+
+.forgot-password {
+    display: block;
+    text-align: center;
+    color: #ea4335;
+    text-decoration: none;
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+
+/* Стили для кнопки регистрации */
+.register-btn {
+    background-color: #fbbc05;
+    margin-top: 8px;
+}
+
+    .register-btn:hover {
+        background-color: #e6ac00;
+    }
+
+.auth-btn + .auth-btn {
+    margin-top: 8px;
+}

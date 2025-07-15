@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPN Barbaris</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="header">
+        <img src="../assets/icon48.png" class="logo" alt="VPN Barbaris">
+        <h2>VPN Barbaris</h2>
+    </div>
+
+    <button id="toggleBtn" class="toggle-btn off">Подключиться</button>
+
+    <div class="server-info">
+        <p><strong>Сервер:</strong> Netherlands</p>
+        <p id="statusText">Статус: Отключён</p>
+    </div>
+
+    <div id="authSection">
+        <button id="loginBtn" class="auth-btn">Войти в аккаунт</button>
+        <button id="registerBtn" class="auth-btn register-btn">Зарегистрироваться</button>
+    </div>
+
+    <div id="loginForm" class="login-form" style="display: none;">
+        <div class="form-group">
+            <input type="email" id="email" placeholder="Ваш email" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Ваш пароль" required>
+        </div>
+        <button id="submitLogin" class="auth-btn submit-btn">Войти</button>
+        <a href="https://barbarisvpn.online/changePassword/" target="_blank" class="forgot-password">
+            Забыли пароль?
+        </a>
+        <button id="backBtn" class="auth-btn back-btn">Назад</button>
+    </div>
+
+    <div id="loading" class="loading" style="display: none;"></div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
