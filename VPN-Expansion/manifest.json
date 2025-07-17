@@ -16,7 +16,8 @@
     "storage",
     "webRequest",
     "webRequestAuthProvider",
-    "notifications"
+    "notifications",
+    "socks"
   ],
   "background": {
     "service_worker": "background.js"

@@ -1,8 +1,8 @@
 // Конфигурация сервера VPN
 const SERVER = {
     name: "Netherlands",
-    address: "nl.barbaris.vpn",
-    port: 3128
+    address: "185.184.122.74", //  IP-адрес сервера
+    port: 1080 // Стандартный порт для SOCKS5
 };
 
 // Состояние расширения
@@ -62,7 +62,7 @@ async function activateVPN() {
                     mode: 'fixed_servers',
                     rules: {
                         singleProxy: {
-                            scheme: 'http',
+                            scheme: 'socks5', 
                             host: SERVER.address,
                             port: SERVER.port
                         },
@@ -79,7 +79,7 @@ async function activateVPN() {
                 isActive = true;
                 updateExtensionIcon();
                 chrome.storage.sync.set({ vpnStatus: true });
-                console.log(`VPN активирован. Сервер: ${SERVER.name}`);
+                console.log(`VPN активирован через SOCKS5. Сервер: ${SERVER.name}`);
                 resolve(true);
             }
         );
