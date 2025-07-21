@@ -216,3 +216,22 @@ h2 {
 .auth-btn + .auth-btn {
     margin-top: 8px;
 }
+
+/* Добавим в конец файла */
+.user-info {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+#userInfo {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    color: #333;
+}
+
+#userEmail {
+    color: #1a73e8;
+    font-weight: normal;
+}

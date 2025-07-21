@@ -8,14 +8,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitLogin = document.getElementById('submitLogin');
     const backBtn = document.getElementById('backBtn');
     const loadingElement = document.getElementById('loading');
+    const userInfo = document.getElementById('userInfo');
+    const userEmail = document.getElementById('userEmail');
 
     let isActive = false;
+    //let isAuthenticated = false;
+    let isAuthenticated = true;
+    const email = "sergdorn@inbox.ru";
+    const password = "jnXJ_dagtX8ce_hbOwad";
 
     // Инициализация UI
     initUI();
 
     // Обработчик кнопки VPN
     toggleBtn.addEventListener('click', function () {
+        if (!isAuthenticated) {
+            alert('Пожалуйста, войдите в аккаунт перед использованием VPN');
+            return;
+        }
+
         toggleBtn.disabled = true;
         loadingElement.style.display = 'block';
         loadingElement.textContent = isActive ? 'Отключаем...' : 'Подключаем...';
@@ -44,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Обработчик отправки формы
+   
     submitLogin.addEventListener('click', function () {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
@@ -56,13 +68,23 @@ document.addEventListener('DOMContentLoaded', function () {
         loadingElement.style.display = 'block';
         loadingElement.textContent = 'Входим в аккаунт...';
 
-        // Здесь будет код для авторизации через API
-        setTimeout(() => {
+        chrome.runtime.sendMessage({
+            action: "authenticate",
+            credentials: { email, password }
+        }, (response) => {
             loadingElement.style.display = 'none';
-            alert('Авторизация успешна!');
-            loginForm.style.display = 'none';
-            authSection.style.display = 'block';
-        }, 1500);
+
+            if (response.success) {
+                isAuthenticated = true;
+                userEmail.textContent = email;
+                userInfo.style.display = 'block';
+                loginForm.style.display = 'none';
+                authSection.style.display = 'none';
+                alert('Авторизация успешна!');
+            } else {
+                alert('Ошибка авторизации: ' + response.error);
+            }
+        });
     });
 
     // Слушаем изменения статуса VPN
@@ -82,6 +104,16 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             isActive = response.status;
             updateUI(isActive);
+        });
+
+        // Проверяем аутентификацию при загрузке
+        chrome.runtime.sendMessage({ action: "checkAuth" }, function (response) {
+            if (response.authenticated) {
+                isAuthenticated = true;
+                userEmail.textContent = response.email;
+                userInfo.style.display = 'block';
+                authSection.style.display = 'none';
+            }
         });
     }
 

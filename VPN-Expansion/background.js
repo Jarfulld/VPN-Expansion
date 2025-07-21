@@ -1,13 +1,34 @@
 // Конфигурация сервера VPN
-const SERVER = {
+const SERVER_CONFIG = {
     name: "Netherlands",
-    address: "185.184.122.74", //  IP-адрес сервера
-    port: 1080 // Стандартный порт для SOCKS5
+    address: "185.184.122.74",
+    port: 1000,
+    scheme: 'socks5'
+};
+
+// Настройки прокси
+const PROXY_SETTINGS = {
+    active: {
+        mode: 'fixed_servers',
+        rules: {
+            singleProxy: {
+                scheme: SERVER_CONFIG.scheme,
+                host: SERVER_CONFIG.address,
+                port: SERVER_CONFIG.port
+            },
+            bypassList: ['localhost']
+        }
+    },
+    inactive: {
+        mode: 'direct'
+    }
 };
 
 // Состояние расширения
-let isActive = false;
-let isAuthenticated = false;
+let vpnState = {
+    isActive: false,
+    lastActivation: null
+};
 
 // Инициализация расширения
 chrome.runtime.onInstalled.addListener(() => {
@@ -23,143 +44,106 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             return true;
 
         case "getStatus":
-            sendResponse({ status: isActive });
+            sendResponse({ status: vpnState.isActive });
             break;
 
-        case "authenticate":
-            authenticate(request.credentials)
-                .then(result => sendResponse(result))
-                .catch(error => sendResponse({ error }));
-            return true;
+        case "getServerInfo":
+            sendResponse({ server: SERVER_CONFIG });
+            break;
 
         default:
             console.warn('Неизвестное действие:', request.action);
     }
 });
 
+// Основные функции VPN
+const VPNManager = {
+    activate: async function () {
+        return new Promise((resolve, reject) => {
+            chrome.proxy.settings.set(
+                {
+                    scope: 'regular',
+                    value: PROXY_SETTINGS.active
+                },
+                () => {
+                    if (chrome.runtime.lastError) {
+                        reject(chrome.runtime.lastError);
+                        return;
+                    }
+
+                    vpnState.isActive = true;
+                    vpnState.lastActivation = new Date();
+                    this.updateUI();
+                    chrome.storage.sync.set({ vpnStatus: true });
+                    console.log(`VPN активирован через ${SERVER_CONFIG.scheme.toUpperCase()}. Сервер: ${SERVER_CONFIG.name} (${SERVER_CONFIG.address}:${SERVER_CONFIG.port})`);
+                    resolve(true);
+                }
+            );
+        });
+    },
+
+    deactivate: async function () {
+        return new Promise((resolve, reject) => {
+            chrome.proxy.settings.set(
+                {
+                    scope: 'regular',
+                    value: PROXY_SETTINGS.inactive
+                },
+                () => {
+                    if (chrome.runtime.lastError) {
+                        reject(chrome.runtime.lastError);
+                        return;
+                    }
+
+                    vpnState.isActive = false;
+                    this.updateUI();
+                    chrome.storage.sync.set({ vpnStatus: false });
+                    console.log('VPN деактивирован');
+                    resolve(false);
+                }
+            );
+        });
+    },
+
+    updateUI: function () {
+        const iconPrefix = vpnState.isActive ? 'active' : 'icon';
+        chrome.action.setIcon({
+            path: {
+                "16": `assets/${iconPrefix}16.png`,
+                "32": `assets/${iconPrefix}32.png`,
+                "48": `assets/${iconPrefix}48.png`
+            }
+        });
+    }
+};
+
 // Переключение VPN
 async function toggleVPN() {
     try {
-        if (isActive) {
-            await deactivateVPN();
+        if (vpnState.isActive) {
+            await VPNManager.deactivate();
         } else {
-            await activateVPN();
+            await VPNManager.activate();
         }
-        return isActive;
+        return vpnState.isActive;
     } catch (error) {
         console.error('Ошибка переключения VPN:', error);
         throw error;
     }
 }
 
-// Активация VPN
-async function activateVPN() {
-    return new Promise((resolve, reject) => {
-        chrome.proxy.settings.set(
-            {
-                scope: 'regular',
-                value: {
-                    mode: 'fixed_servers',
-                    rules: {
-                        singleProxy: {
-                            scheme: 'socks5', 
-                            host: SERVER.address,
-                            port: SERVER.port
-                        },
-                        bypassList: ['localhost']
-                    }
-                }
-            },
-            () => {
-                if (chrome.runtime.lastError) {
-                    reject(chrome.runtime.lastError);
-                    return;
-                }
-
-                isActive = true;
-                updateExtensionIcon();
-                chrome.storage.sync.set({ vpnStatus: true });
-                console.log(`VPN активирован через SOCKS5. Сервер: ${SERVER.name}`);
-                resolve(true);
-            }
-        );
-    });
-}
-
-// Деактивация VPN
-async function deactivateVPN() {
-    return new Promise((resolve, reject) => {
-        chrome.proxy.settings.set(
-            {
-                scope: 'regular',
-                value: {
-                    mode: 'direct'
-                }
-            },
-            () => {
-                if (chrome.runtime.lastError) {
-                    reject(chrome.runtime.lastError);
-                    return;
-                }
-
-                isActive = false;
-                updateExtensionIcon();
-                chrome.storage.sync.set({ vpnStatus: false });
-                console.log('VPN деактивирован');
-                resolve(false);
-            }
-        );
-    });
-}
-
-// Аутентификация (заглушка)
-async function authenticate(credentials) {
-    try {
-        const response = await mockAuthApiCall(credentials);
-        isAuthenticated = true;
-        return { success: true, user: response.user };
-    } catch (error) {
-        isAuthenticated = false;
-        return { success: false, error: error.message };
-    }
-}
-
-// Мок API аутентификации
-function mockAuthApiCall(credentials) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (credentials.email && credentials.password.length >= 6) {
-                resolve({
-                    user: {
-                        email: credentials.email,
-                        name: 'Тестовый Пользователь'
-                    }
-                });
-            } else {
-                reject(new Error('Неверные учетные данные'));
-            }
-        }, 1000);
-    });
-}
-
-// Обновление иконки
-function updateExtensionIcon() {
-    const iconPrefix = isActive ? 'active' : 'icon';
-    const iconPath = `assets/${iconPrefix}`;
-
-    chrome.action.setIcon({
-        path: {
-            "16": `${iconPath}16.png`,
-            "32": `${iconPath}32.png`,
-            "48": `${iconPath}48.png`
-        }
-    });
-}
-
 // Отслеживание изменений состояния
 chrome.storage.onChanged.addListener((changes) => {
     if (changes.vpnStatus) {
-        isActive = changes.vpnStatus.newValue;
-        updateExtensionIcon();
+        vpnState.isActive = changes.vpnStatus.newValue;
+        VPNManager.updateUI();
     }
+});
+
+// Инициализация состояния
+chrome.runtime.onStartup.addListener(() => {
+    chrome.storage.sync.get(['vpnStatus'], (result) => {
+        vpnState.isActive = result.vpnStatus || false;
+        VPNManager.updateUI();
+    });
 });
