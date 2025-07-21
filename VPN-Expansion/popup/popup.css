@@ -1,237 +1,291 @@
+/* Основные стили для body - задает размеры, отступы, шрифт и фон всплывающего окна */
 body {
-  width: 250px;
-  padding: 15px;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  text-align: center;
-  background-color: #f9f9f9;
-  margin: 0;
+    width: 250px; /* Фиксированная ширина окна */
+    padding: 15px; /* Внутренние отступы */
+    font-family: 'Segoe UI', Arial, sans-serif; /* Основной шрифт */
+    text-align: center; /* Выравнивание текста по центру */
+    background-color: #f9f9f9; /* Цвет фона */
+    margin: 0; /* Убираем внешние отступы */
 }
 
+/* Стили для шапки с логотипом и заголовком */
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
+    display: flex; /* Используем flex-контейнер */
+    align-items: center; /* Выравниваем элементы по вертикали */
+    justify-content: center; /* Выравниваем по горизонтали */
+    margin-bottom: 20px; /* Отступ снизу */
 }
 
+/* Стили для логотипа */
 .logo {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
+    width: 32px; /* Ширина логотипа */
+    height: 32px; /* Высота логотипа */
+    margin-right: 10px; /* Отступ справа от логотипа */
 }
 
+/* Стили для заголовка */
 h2 {
-  color: #333;
-  font-size: 18px;
-  margin: 0;
-  font-weight: 600;
+    color: #333; /* Цвет текста */
+    font-size: 18px; /* Размер шрифта */
+    margin: 0; /* Убираем отступы */
+    font-weight: 600; /* Жирность шрифта */
 }
 
+/* Общие стили для кнопки переключения */
 .toggle-btn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 15px;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%; /* Занимает всю доступную ширину */
+    padding: 10px; /* Внутренние отступы */
+    border: none; /* Убираем границу */
+    border-radius: 6px; /* Закругляем углы */
+    font-weight: bold; /* Жирный текст */
+    cursor: pointer; /* Курсор-указатель */
+    margin-bottom: 15px; /* Отступ снизу */
+    transition: all 0.3s ease; /* Плавные анимации */
+    font-size: 14px; /* Размер шрифта */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Тень кнопки */
 }
 
-.toggle-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  box-shadow: none;
-}
+    /* Стили для отключенной кнопки */
+    .toggle-btn:disabled {
+        opacity: 0.7; /* Полупрозрачность */
+        cursor: not-allowed; /* Курсор "недоступно" */
+        box-shadow: none; /* Убираем тень */
+    }
 
-.toggle-btn.on {
-  background-color: #4CAF50;
-  color: white;
-}
+    /* Стили для включенного состояния кнопки */
+    .toggle-btn.on {
+        background-color: #4CAF50; /* Зеленый фон */
+        color: white; /* Белый текст */
+    }
 
-.toggle-btn.on:hover:not(:disabled) {
-  background-color: #3e8e41;
-}
+        /* Стили при наведении на включенную кнопку */
+        .toggle-btn.on:hover:not(:disabled) {
+            background-color: #3e8e41; /* Темно-зеленый фон */
+        }
 
-.toggle-btn.off {
-  background-color: #f44336;
-  color: white;
-}
+    /* Стили для выключенного состояния кнопки */
+    .toggle-btn.off {
+        background-color: #f44336; /* Красный фон */
+        color: white; /* Белый текст */
+    }
 
-.toggle-btn.off:hover:not(:disabled) {
-  background-color: #d32f2f;
-}
+        /* Стили при наведении на выключенную кнопку */
+        .toggle-btn.off:hover:not(:disabled) {
+            background-color: #d32f2f; /* Темно-красный фон */
+        }
 
+/* Стили для блока с информацией о сервере */
 .server-info {
-  background-color: #ffffff;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  text-align: left;
+    background-color: #ffffff; /* Белый фон */
+    padding: 12px; /* Внутренние отступы */
+    border-radius: 6px; /* Закругленные углы */
+    margin-bottom: 15px; /* Отступ снизу */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Легкая тень */
+    text-align: left; /* Текст выровнен по левому краю */
 }
 
-.server-info p {
-  margin: 5px 0;
-  color: #555;
-  font-size: 13px;
-}
+    /* Стили для абзацев в блоке server-info */
+    .server-info p {
+        margin: 5px 0; /* Отступы сверху и снизу */
+        color: #555; /* Цвет текста */
+        font-size: 13px; /* Размер шрифта */
+    }
 
-.server-info strong {
-  color: #333;
-}
+    /* Стили для жирного текста в server-info */
+    .server-info strong {
+        color: #333; /* Темный цвет текста */
+    }
 
+/* Стили для ссылки "Создать аккаунт" */
 .create-account {
-  color: #1a73e8;
-  text-decoration: none;
-  font-size: 13px;
-  cursor: pointer;
-  display: block;
-  padding: 8px 0;
-  transition: color 0.2s;
+    color: #1a73e8; /* Синий цвет */
+    text-decoration: none; /* Убираем подчеркивание */
+    font-size: 13px; /* Размер шрифта */
+    cursor: pointer; /* Курсор-указатель */
+    display: block; /* Блочное отображение */
+    padding: 8px 0; /* Отступы сверху и снизу */
+    transition: color 0.2s; /* Плавное изменение цвета */
 }
 
-.create-account:hover {
-  color: #0d5bba;
-  text-decoration: underline;
-}
+    /* Стили при наведении на ссылку */
+    .create-account:hover {
+        color: #0d5bba; /* Темно-синий цвет */
+        text-decoration: underline; /* Подчеркивание при наведении */
+    }
 
+/* Стили для индикатора загрузки */
 .loading {
-  margin: 10px 0;
-  font-size: 12px;
-  color: #666;
-  animation: pulse 1.5s infinite;
+    margin: 10px 0; /* Отступы сверху и снизу */
+    font-size: 12px; /* Размер шрифта */
+    color: #666; /* Цвет текста */
+    animation: pulse 1.5s infinite; /* Анимация пульсации */
 }
 
+/* Анимация пульсации для индикатора загрузки */
 @keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
+    0% {
+        opacity: 0.6;
+    }
+    /* Начальная прозрачность */
+    50% {
+        opacity: 1;
+    }
+    /* Пиковая прозрачность */
+    100% {
+        opacity: 0.6;
+    }
+    /* Конечная прозрачность */
 }
 
-/* Добавляем адаптивность для разных размеров */
+/* Адаптивные стили для маленьких экранов */
 @media (max-width: 280px) {
-  body {
-    padding: 10px;
-    width: 220px;
-  }
-  
-  h2 {
-    font-size: 16px;
-  }
+    body {
+        padding: 10px; /* Уменьшаем отступы */
+        width: 220px; /* Уменьшаем ширину */
+    }
+
+    h2 {
+        font-size: 16px; /* Уменьшаем размер шрифта */
+    }
 }
 
-
-/* Стили для формы авторизации */
+/* Стили для кнопок авторизации */
 .auth-btn {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #4285f4;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    width: 100%; /* Занимает всю ширину */
+    padding: 10px; /* Внутренние отступы */
+    margin-bottom: 10px; /* Отступ снизу */
+    background-color: #4285f4; /* Синий фон */
+    color: white; /* Белый текст */
+    border: none; /* Убираем границу */
+    border-radius: 4px; /* Закругленные углы */
+    cursor: pointer; /* Курсор-указатель */
+    font-weight: bold; /* Жирный текст */
+    transition: background-color 0.3s; /* Плавное изменение фона */
 }
 
+    /* Стили при наведении на кнопку авторизации */
     .auth-btn:hover {
-        background-color: #3367d6;
+        background-color: #3367d6; /* Темно-синий фон */
     }
 
+/* Стили для ссылки в форме авторизации */
 .auth-link {
-    display: block;
-    text-align: center;
-    color: #4285f4;
-    text-decoration: none;
-    margin-bottom: 15px;
-    font-size: 13px;
+    display: block; /* Блочное отображение */
+    text-align: center; /* Выравнивание по центру */
+    color: #4285f4; /* Синий цвет */
+    text-decoration: none; /* Убираем подчеркивание */
+    margin-bottom: 15px; /* Отступ снизу */
+    font-size: 13px; /* Размер шрифта */
 }
 
+    /* Стили при наведении на ссылку */
     .auth-link:hover {
-        text-decoration: underline;
+        text-decoration: underline; /* Подчеркивание при наведении */
     }
 
+/* Стили для формы входа */
 .login-form {
-    margin-top: 10px;
+    margin-top: 10px; /* Отступ сверху */
 }
 
+/* Стили для группы элементов формы */
 .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 10px; /* Отступ снизу */
 }
 
+    /* Стили для полей ввода */
     .form-group input {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
+        width: 100%; /* Занимает всю ширину */
+        padding: 8px; /* Внутренние отступы */
+        border: 1px solid #ddd; /* Граница */
+        border-radius: 4px; /* Закругленные углы */
+        box-sizing: border-box; /* Правильный расчет размеров */
     }
 
+/* Стили для кнопки отправки формы */
 .submit-btn {
-    background-color: #34a853;
-    margin-top: 5px;
+    background-color: #34a853; /* Зеленый фон */
+    margin-top: 5px; /* Отступ сверху */
 }
 
+    /* Стили при наведении на кнопку отправки */
     .submit-btn:hover {
-        background-color: #2d8e47;
+        background-color: #2d8e47; /* Темно-зеленый фон */
     }
 
+/* Стили для кнопки "Назад" */
 .back-btn {
-    background-color: #fbbc05;
-    margin-top: 5px;
+    background-color: #fbbc05; /* Желтый фон */
+    margin-top: 5px; /* Отступ сверху */
 }
 
+    /* Стили при наведении на кнопку "Назад" */
     .back-btn:hover {
-        background-color: #e6ac00;
+        background-color: #e6ac00; /* Темно-желтый фон */
     }
 
+/* Стили для ссылки "Забыли пароль" */
 .forgot-password {
-    display: block;
-    text-align: center;
-    color: #ea4335;
-    text-decoration: none;
-    font-size: 12px;
-    margin: 5px 0;
+    display: block; /* Блочное отображение */
+    text-align: center; /* Выравнивание по центру */
+    color: #ea4335; /* Красный цвет */
+    text-decoration: none; /* Убираем подчеркивание */
+    font-size: 12px; /* Размер шрифта */
+    margin: 5px 0; /* Отступы сверху и снизу */
 }
 
+    /* Стили при наведении на ссылку "Забыли пароль" */
     .forgot-password:hover {
-        text-decoration: underline;
+        text-decoration: underline; /* Подчеркивание при наведении */
     }
-
 
 /* Стили для кнопки регистрации */
 .register-btn {
-    background-color: #fbbc05;
-    margin-top: 8px;
+    background-color: #fbbc05; /* Желтый фон */
+    margin-top: 8px; /* Отступ сверху */
 }
 
+    /* Стили при наведении на кнопку регистрации */
     .register-btn:hover {
-        background-color: #e6ac00;
+        background-color: #e6ac00; /* Темно-желтый фон */
     }
 
+/* Стили для кнопок авторизации, идущих друг за другом */
 .auth-btn + .auth-btn {
-    margin-top: 8px;
+    margin-top: 8px; /* Отступ сверху */
 }
 
-/* Добавим в конец файла */
+/* Стили для блока с информацией о пользователе */
 .user-info {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
+    margin-top: 10px; /* Отступ сверху */
+    padding-top: 10px; /* Внутренний отступ сверху */
+    border-top: 1px solid #eee; /* Граница сверху */
 }
 
+/* Альтернативный селектор для блока информации о пользователе */
 #userInfo {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-    color: #333;
+    margin-top: 10px; /* Отступ сверху */
+    padding-top: 10px; /* Внутренний отступ сверху */
+    border-top: 1px solid #eee; /* Граница сверху */
+    color: #333; /* Цвет текста */
 }
 
+/* Стили для email пользователя */
 #userEmail {
-    color: #1a73e8;
-    font-weight: normal;
+    color: #1a73e8; /* Синий цвет */
+    font-weight: normal; /* Обычный шрифт */
 }
+
+/* Стили для кнопки выхода */
+#logoutBtn {
+    background-color: #ea4335; /* Красный фон */
+    color: white; /* Белый текст */
+    border: none; /* Убираем границу */
+    padding: 8px; /* Внутренние отступы */
+    font-size: 13px; /* Размер шрифта */
+}
+
+    /* Стили при наведении на кнопку выхода */
+    #logoutBtn:hover {
+        background-color: #d33426; /* Темно-красный фон */
+    }
