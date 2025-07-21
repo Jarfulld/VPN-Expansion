@@ -1,39 +1,38 @@
-// Конфигурация VPN-сервера (в реальном приложении должно быть несколько серверов)
+// Конфигурация сервера VPN
 const SERVER_CONFIG = {
-    name: "Netherlands",       // Человекочитаемое название сервера
-    address: "185.184.122.74", // IP-адрес сервера
-    port: 1000,                // Порт для подключения
-    scheme: 'socks5'           // Протокол подключения (SOCKS5)
+    name: "Netherlands",          // Название сервера
+    address: "185.184.122.74",    // IP-адрес сервера
+    port: 1000,                   // Порт для подключения
+    scheme: 'socks5'              // Протокол подключения (SOCKS5)
 };
 
-// Настройки прокси для активного и неактивного состояний
+// Настройки прокси
 const PROXY_SETTINGS = {
-    active: {
-        mode: 'fixed_servers',  // Режим фиксированного сервера
+    active: {                     // Настройки активного прокси
+        mode: 'fixed_servers',    // Режим работы: фиксированные серверы
         rules: {
-            singleProxy: {      // Настройки единственного прокси-сервера
-                scheme: SERVER_CONFIG.scheme,
-                host: SERVER_CONFIG.address,
-                port: SERVER_CONFIG.port
+            singleProxy: {       // Конфигурация единственного прокси
+                scheme: SERVER_CONFIG.scheme,  // Протокол из SERVER_CONFIG
+                host: SERVER_CONFIG.address,   // IP-адрес из SERVER_CONFIG
+                port: SERVER_CONFIG.port       // Порт из SERVER_CONFIG
             },
-            bypassList: ['localhost']  // Сайты, которые не должны идти через прокси
+            bypassList: ['localhost']  // Список исключений (не использовать прокси для localhost)
         }
     },
-    inactive: {
-        mode: 'direct'  // Прямое подключение без прокси
+    inactive: {                   // Настройки неактивного прокси
+        mode: 'direct'            // Режим работы: прямое подключение (без прокси)
     }
 };
 
-// Состояние VPN (активно/неактивно и время последней активации)
-let vpnState = {
-    isActive: false,
-    lastActivation: null
+// Состояние расширения
+let vpnState = {                  // Объект для хранения состояния VPN
+    isActive: false,              // Флаг активности VPN
+    lastActivation: null          // Время последней активации
 };
 
-// Состояние аутентификации пользователя
-let authState = {
-    isAuthenticated: false,
-    email: ""
+let authState = {                 // Объект для хранения состояния аутентификации
+    isAuthenticated: false,       // Флаг аутентификации пользователя
+    email: ""                     // Email пользователя
 };
 
 // Инициализация расширения при установке
@@ -41,83 +40,75 @@ chrome.runtime.onInstalled.addListener(() => {
     console.log('VPN Barbaris инициализирован');
     // Установка начальных значений в хранилище
     chrome.storage.sync.set({
-        vpnStatus: false,
-        authState: {
+        vpnStatus: false,         // Статус VPN по умолчанию: выключен
+        authState: {              // Начальное состояние аутентификации
             isAuthenticated: false,
             email: ""
         }
     });
 });
 
-// Обработчик сообщений от других частей расширения (попап, content scripts)
+// Обработчик сообщений между компонентами расширения
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    switch (request.action) {
-        case "toggle":
-            // Переключение состояния VPN
+    switch (request.action) {     // Обработка различных действий
+        case "toggle":            // Переключение состояния VPN
             toggleVPN().then(status => sendResponse({ status }));
-            return true;  // Необходимо для асинхронного ответа
+            return true;          // Возврат true для асинхронного ответа
 
-        case "getStatus":
-            // Возврат текущего состояния VPN
+        case "getStatus":         // Получение текущего статуса VPN
             sendResponse({ status: vpnState.isActive });
             break;
 
-        case "getServerInfo":
-            // Возврат информации о текущем сервере
+        case "getServerInfo":    // Получение информации о сервере
             sendResponse({ server: SERVER_CONFIG });
             break;
 
-        case "authenticate":
-            // Упрощенная аутентификация (в реальном приложении нужна проверка)
+        case "authenticate":      // Аутентификация пользователя
             authState.isAuthenticated = true;
             authState.email = request.credentials.email;
-            chrome.storage.sync.set({ authState });
+            chrome.storage.sync.set({ authState });  // Сохранение состояния в хранилище
             sendResponse({ success: true });
             break;
 
-        case "checkAuth":
-            // Проверка состояния аутентификации
+        case "checkAuth":         // Проверка состояния аутентификации
             sendResponse({
                 authenticated: authState.isAuthenticated,
                 email: authState.email
             });
             break;
 
-        case "logout":
-            // Выход из системы
+        case "logout":            // Выход из системы
             authState.isAuthenticated = false;
             authState.email = "";
-            chrome.storage.sync.set({ authState });
+            chrome.storage.sync.set({ authState });  // Обновление хранилища
             sendResponse({ success: true });
             break;
 
-        default:
+        default:                  // Обработка неизвестных действий
             console.warn('Неизвестное действие:', request.action);
     }
 });
 
-// Менеджер VPN - основной функционал расширения
+// Основные функции управления VPN
 const VPNManager = {
     // Активация VPN
     activate: async function () {
         return new Promise((resolve, reject) => {
-            // Установка настроек прокси
-            chrome.proxy.settings.set(
+            chrome.proxy.settings.set(  // Установка настроек прокси
                 {
-                    scope: 'regular',  // Применять для обычного режима
-                    value: PROXY_SETTINGS.active
+                    scope: 'regular',  // Область применения: обычные профили
+                    value: PROXY_SETTINGS.active  // Активные настройки прокси
                 },
                 () => {
                     if (chrome.runtime.lastError) {
-                        reject(chrome.runtime.lastError);
+                        reject(chrome.runtime.lastError);  // Обработка ошибки
                         return;
                     }
 
-                    // Обновление состояния и интерфейса
                     vpnState.isActive = true;
-                    vpnState.lastActivation = new Date();
-                    this.updateUI();
-                    chrome.storage.sync.set({ vpnStatus: true });
+                    vpnState.lastActivation = new Date();  // Запись времени активации
+                    this.updateUI();                       // Обновление иконки
+                    chrome.storage.sync.set({ vpnStatus: true });  // Сохранение статуса
                     console.log(`VPN активирован через ${SERVER_CONFIG.scheme.toUpperCase()}. Сервер: ${SERVER_CONFIG.name} (${SERVER_CONFIG.address}:${SERVER_CONFIG.port})`);
                     resolve(true);
                 }
@@ -131,7 +122,7 @@ const VPNManager = {
             chrome.proxy.settings.set(
                 {
                     scope: 'regular',
-                    value: PROXY_SETTINGS.inactive
+                    value: PROXY_SETTINGS.inactive  // Настройки прямого подключения
                 },
                 () => {
                     if (chrome.runtime.lastError) {
@@ -140,8 +131,8 @@ const VPNManager = {
                     }
 
                     vpnState.isActive = false;
-                    this.updateUI();
-                    chrome.storage.sync.set({ vpnStatus: false });
+                    this.updateUI();                       // Обновление иконки
+                    chrome.storage.sync.set({ vpnStatus: false });  // Сохранение статуса
                     console.log('VPN деактивирован');
                     resolve(false);
                 }
@@ -149,14 +140,14 @@ const VPNManager = {
         });
     },
 
-    // Обновление иконки расширения в зависимости от состояния
+    // Обновление иконки расширения
     updateUI: function () {
-        const iconPrefix = vpnState.isActive ? 'active' : 'icon';
+        const iconPrefix = vpnState.isActive ? 'active' : 'icon';  // Выбор префикса иконки
         chrome.action.setIcon({
             path: {
-                "16": `assets/${iconPrefix}16.png`,
-                "32": `assets/${iconPrefix}32.png`,
-                "48": `assets/${iconPrefix}48.png`
+                "16": `assets/${iconPrefix}16.png`,  // Иконка 16x16
+                "32": `assets/${iconPrefix}32.png`,  // Иконка 32x32
+                "48": `assets/${iconPrefix}48.png`   // Иконка 48x48
             }
         });
     }
@@ -166,24 +157,24 @@ const VPNManager = {
 async function toggleVPN() {
     try {
         if (vpnState.isActive) {
-            await VPNManager.deactivate();
+            await VPNManager.deactivate();  // Деактивация, если активно
         } else {
-            await VPNManager.activate();
+            await VPNManager.activate();     // Активация, если неактивно
         }
-        return vpnState.isActive;
+        return vpnState.isActive;           // Возврат текущего состояния
     } catch (error) {
         console.error('Ошибка переключения VPN:', error);
         throw error;
     }
 }
 
-// Отслеживание изменений в хранилище (синхронизация между вкладками)
+// Отслеживание изменений в хранилище
 chrome.storage.onChanged.addListener((changes) => {
-    if (changes.vpnStatus) {
+    if (changes.vpnStatus) {                // Если изменился статус VPN
         vpnState.isActive = changes.vpnStatus.newValue;
-        VPNManager.updateUI();
+        VPNManager.updateUI();               // Обновление иконки
     }
-    if (changes.authState) {
+    if (changes.authState) {                // Если изменилось состояние аутентификации
         authState = changes.authState.newValue;
     }
 });
@@ -191,8 +182,8 @@ chrome.storage.onChanged.addListener((changes) => {
 // Инициализация состояния при запуске браузера
 chrome.runtime.onStartup.addListener(() => {
     chrome.storage.sync.get(['vpnStatus', 'authState'], (result) => {
-        vpnState.isActive = result.vpnStatus || false;
-        authState = result.authState || { isAuthenticated: false, email: "" };
-        VPNManager.updateUI();
+        vpnState.isActive = result.vpnStatus || false;  // Восстановление статуса VPN
+        authState = result.authState || { isAuthenticated: false, email: "" };  // Восстановление состояния аутентификации
+        VPNManager.updateUI();               // Обновление иконки
     });
 });
