@@ -56,16 +56,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Обработчик клика по кнопке выхода
     logoutBtn.addEventListener('click', function () {
+        // Блокируем кнопку на время обработки запроса
+        toggleBtn.disabled = true;
+        loadingElement.style.display = 'block';
+        loadingElement.textContent = 'Выход из аккаунта...';
+
         // Отправляем сообщение в фоновый скрипт для выхода
         chrome.runtime.sendMessage({ action: "logout" }, function (response) {
             if (response.success) {
                 // Обновляем состояние и UI после успешного выхода
                 isAuthenticated = false;
                 email = "";
+                isActive = false;
+                updateUI(isActive);
+
                 userInfo.style.display = 'none';
                 authSection.style.display = 'block';
                 loginForm.style.display = 'none';
             }
+
+            // Разблокируем кнопку после завершения операции
+            toggleBtn.disabled = false;
+            loadingElement.style.display = 'none';
         });
     });
 
@@ -99,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
             loadingElement.style.display = 'none';
 
             if (/*response.success*/ email == "sergdorn@inbox.ru") {
+                console.log("Вход в аккаунт");
                 // Успешная аутентификация - обновляем состояние и UI
                 isAuthenticated = true;
                 userEmail.textContent = email;

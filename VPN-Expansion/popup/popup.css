@@ -45,34 +45,34 @@ h2 {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Тень кнопки */
 }
 
-    /* Стили для отключенной кнопки */
-    .toggle-btn:disabled {
-        opacity: 0.7; /* Полупрозрачность */
-        cursor: not-allowed; /* Курсор "недоступно" */
-        box-shadow: none; /* Убираем тень */
-    }
+/* Стили для отключенной кнопки */
+.toggle-btn:disabled {
+    opacity: 0.7; /* Полупрозрачность */
+    cursor: not-allowed; /* Курсор "недоступно" */
+    box-shadow: none; /* Убираем тень */
+}
 
-    /* Стили для включенного состояния кнопки */
-    .toggle-btn.on {
-        background-color: #4CAF50; /* Зеленый фон */
-        color: white; /* Белый текст */
-    }
+/* Стили для включенного состояния кнопки */
+.toggle-btn.on {
+    background-color: #4CAF50; /* Зеленый фон */
+    color: white; /* Белый текст */
+}
 
-        /* Стили при наведении на включенную кнопку */
-        .toggle-btn.on:hover:not(:disabled) {
-            background-color: #3e8e41; /* Темно-зеленый фон */
-        }
+/* Стили при наведении на включенную кнопку */
+.toggle-btn.on:hover:not(:disabled) {
+    background-color: #3e8e41; /* Темно-зеленый фон */
+}
 
-    /* Стили для выключенного состояния кнопки */
-    .toggle-btn.off {
-        background-color: #f44336; /* Красный фон */
-        color: white; /* Белый текст */
-    }
+/* Стили для выключенного состояния кнопки */
+.toggle-btn.off {
+    background-color: #f44336; /* Красный фон */
+    color: white; /* Белый текст */
+}
 
-        /* Стили при наведении на выключенную кнопку */
-        .toggle-btn.off:hover:not(:disabled) {
-            background-color: #d32f2f; /* Темно-красный фон */
-        }
+/* Стили при наведении на выключенную кнопку */
+.toggle-btn.off:hover:not(:disabled) {
+    background-color: #d32f2f; /* Темно-красный фон */
+}
 
 /* Стили для блока с информацией о сервере */
 .server-info {
@@ -84,17 +84,17 @@ h2 {
     text-align: left; /* Текст выровнен по левому краю */
 }
 
-    /* Стили для абзацев в блоке server-info */
-    .server-info p {
-        margin: 5px 0; /* Отступы сверху и снизу */
-        color: #555; /* Цвет текста */
-        font-size: 13px; /* Размер шрифта */
-    }
+/* Стили для абзацев в блоке server-info */
+.server-info p {
+    margin: 5px 0; /* Отступы сверху и снизу */
+    color: #555; /* Цвет текста */
+    font-size: 13px; /* Размер шрифта */
+}
 
-    /* Стили для жирного текста в server-info */
-    .server-info strong {
-        color: #333; /* Темный цвет текста */
-    }
+/* Стили для жирного текста в server-info */
+.server-info strong {
+    color: #333; /* Темный цвет текста */
+}
 
 /* Стили для ссылки "Создать аккаунт" */
 .create-account {
@@ -107,11 +107,11 @@ h2 {
     transition: color 0.2s; /* Плавное изменение цвета */
 }
 
-    /* Стили при наведении на ссылку */
-    .create-account:hover {
-        color: #0d5bba; /* Темно-синий цвет */
-        text-decoration: underline; /* Подчеркивание при наведении */
-    }
+/* Стили при наведении на ссылку */
+.create-account:hover {
+    color: #0d5bba; /* Темно-синий цвет */
+    text-decoration: underline; /* Подчеркивание при наведении */
+}
 
 /* Стили для индикатора загрузки */
 .loading {
@@ -163,10 +163,10 @@ h2 {
     transition: background-color 0.3s; /* Плавное изменение фона */
 }
 
-    /* Стили при наведении на кнопку авторизации */
-    .auth-btn:hover {
-        background-color: #3367d6; /* Темно-синий фон */
-    }
+/* Стили при наведении на кнопку авторизации */
+.auth-btn:hover {
+    background-color: #3367d6; /* Темно-синий фон */
+}
 
 /* Стили для ссылки в форме авторизации */
 .auth-link {
@@ -178,10 +178,10 @@ h2 {
     font-size: 13px; /* Размер шрифта */
 }
 
-    /* Стили при наведении на ссылку */
-    .auth-link:hover {
-        text-decoration: underline; /* Подчеркивание при наведении */
-    }
+/* Стили при наведении на ссылку */
+.auth-link:hover {
+    text-decoration: underline; /* Подчеркивание при наведении */
+}
 
 /* Стили для формы входа */
 .login-form {
@@ -193,14 +193,14 @@ h2 {
     margin-bottom: 10px; /* Отступ снизу */
 }
 
-    /* Стили для полей ввода */
-    .form-group input {
-        width: 100%; /* Занимает всю ширину */
-        padding: 8px; /* Внутренние отступы */
-        border: 1px solid #ddd; /* Граница */
-        border-radius: 4px; /* Закругленные углы */
-        box-sizing: border-box; /* Правильный расчет размеров */
-    }
+/* Стили для полей ввода */
+.form-group input {
+    width: 100%; /* Занимает всю ширину */
+    padding: 8px; /* Внутренние отступы */
+    border: 1px solid #ddd; /* Граница */
+    border-radius: 4px; /* Закругленные углы */
+    box-sizing: border-box; /* Правильный расчет размеров */
+}
 
 /* Стили для кнопки отправки формы */
 .submit-btn {
@@ -208,10 +208,10 @@ h2 {
     margin-top: 5px; /* Отступ сверху */
 }
 
-    /* Стили при наведении на кнопку отправки */
-    .submit-btn:hover {
-        background-color: #2d8e47; /* Темно-зеленый фон */
-    }
+/* Стили при наведении на кнопку отправки */
+.submit-btn:hover {
+    background-color: #2d8e47; /* Темно-зеленый фон */
+}
 
 /* Стили для кнопки "Назад" */
 .back-btn {
@@ -219,10 +219,10 @@ h2 {
     margin-top: 5px; /* Отступ сверху */
 }
 
-    /* Стили при наведении на кнопку "Назад" */
-    .back-btn:hover {
-        background-color: #e6ac00; /* Темно-желтый фон */
-    }
+/* Стили при наведении на кнопку "Назад" */
+.back-btn:hover {
+    background-color: #e6ac00; /* Темно-желтый фон */
+}
 
 /* Стили для ссылки "Забыли пароль" */
 .forgot-password {
@@ -234,10 +234,10 @@ h2 {
     margin: 5px 0; /* Отступы сверху и снизу */
 }
 
-    /* Стили при наведении на ссылку "Забыли пароль" */
-    .forgot-password:hover {
-        text-decoration: underline; /* Подчеркивание при наведении */
-    }
+/* Стили при наведении на ссылку "Забыли пароль" */
+.forgot-password:hover {
+    text-decoration: underline; /* Подчеркивание при наведении */
+}
 
 /* Стили для кнопки регистрации */
 .register-btn {
@@ -245,10 +245,10 @@ h2 {
     margin-top: 8px; /* Отступ сверху */
 }
 
-    /* Стили при наведении на кнопку регистрации */
-    .register-btn:hover {
-        background-color: #e6ac00; /* Темно-желтый фон */
-    }
+/* Стили при наведении на кнопку регистрации */
+.register-btn:hover {
+    background-color: #e6ac00; /* Темно-желтый фон */
+}
 
 /* Стили для кнопок авторизации, идущих друг за другом */
 .auth-btn + .auth-btn {

@@ -10,6 +10,7 @@ const SERVER_CONFIG = {
 const PROXY_SETTINGS = {
     active: {                     // Настройки активного прокси
         mode: 'fixed_servers',    // Режим работы: фиксированные серверы
+
         rules: {
             singleProxy: {       // Конфигурация единственного прокси
                 scheme: SERVER_CONFIG.scheme,  // Протокол из SERVER_CONFIG
@@ -81,7 +82,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             authState.isAuthenticated = false;
             authState.email = "";
             chrome.storage.sync.set({ authState });  // Обновление хранилища
-            sendResponse({ success: true });
+
+            // Всегда пытаемся отключить VPN при выходе
+            if (vpnState.isActive) {
+                VPNManager.deactivate().then(() => {
+                    vpnState.isActive = false;
+                    chrome.storage.sync.set({ vpnStatus: false });
+                    sendResponse({ success: true });
+                }).catch(error => {
+                    console.error('Ошибка при отключении VPN:', error);
+                    sendResponse({ success: false, error: error.message });
+                });
+                return true; // Для асинхронного ответа
+            } else {
+                sendResponse({ success: true });
+            }
             break;
 
         default:                  // Обработка неизвестных действий
@@ -142,12 +157,11 @@ const VPNManager = {
 
     // Обновление иконки расширения
     updateUI: function () {
-        const iconPrefix = vpnState.isActive ? 'active' : 'icon';  // Выбор префикса иконки
         chrome.action.setIcon({
             path: {
-                "16": `assets/${iconPrefix}16.png`,  // Иконка 16x16
-                "32": `assets/${iconPrefix}32.png`,  // Иконка 32x32
-                "48": `assets/${iconPrefix}48.png`   // Иконка 48x48
+                "16": `assets/icon16.png`,  // Иконка 16x16
+                "32": `assets/icon32.png`,  // Иконка 32x32
+                "48": `assets/icon48.png`   // Иконка 48x48
             }
         });
     }
