@@ -49,6 +49,71 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
+async function authenticateWithServer(email, password) {
+    // Формируем запрос к серверу аутентификации
+    const response = await fetch('http://185.184.122.25:5000/auth_auth', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json', // Указываем тип содержимого
+        },
+        // Формируем тело запроса в формате JSON
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+    });
+
+    // Проверяем статус ответа сервера
+    if (!response.ok) {
+        throw new Error(`Ошибка! Статус: ${response.status}`);
+    }
+
+    // Парсим JSON ответ сервера
+    return await response.json();
+}
+
+
+// Функция для аутентификации пользователя на сервере
+async function authenticateWithServer(email, password) {
+    // Формируем тело запроса в формате JSON, как указано в требованиях
+    const requestBody = JSON.stringify({
+        email: email,
+        password: password
+    });
+
+    try {
+        // Отправляем POST-запрос на сервер аутентификации
+        const response = await fetch('http://185.184.122.25:5000/auth_auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Указываем, что отправляем JSON
+            },
+            body: requestBody // Передаем сформированное тело запроса
+        });
+
+        // Проверяем статус ответа сервера
+        if (!response.ok) {
+            // Если сервер вернул ошибку, пытаемся получить сообщение об ошибке из ответа
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Ошибка HTTP! Статус: ${response.status}`);
+        }
+
+        // Парсим JSON ответ сервера
+        const data = await response.json();
+
+        // Проверяем наличие обязательного поля 'success' в ответе
+        if (!data.hasOwnProperty('success')) {
+            throw new Error('Некорректный формат ответа сервера');
+        }
+
+        // Возвращаем данные для обработки в вызывающем коде
+        return data;
+    } catch (error) {
+        console.error('Ошибка при аутентификации:', error);
+        throw error; // Пробрасываем ошибку дальше для обработки в вызывающем коде
+    }
+}
+
 // Обработчик сообщений между компонентами расширения
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {     // Обработка различных действий
@@ -64,12 +129,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse({ server: SERVER_CONFIG });
             break;
 
-        case "authenticate":      // Аутентификация пользователя
-            authState.isAuthenticated = true;
-            authState.email = request.credentials.email;
-            chrome.storage.sync.set({ authState });  // Сохранение состояния в хранилище
-            sendResponse({ success: true });
-            break;
+        case "authenticate":
+            // Обработка запроса на аутентификацию
+            authenticateWithServer(request.credentials.email, request.credentials.password)
+                .then(data => {
+                    if (data.success) {
+                        // Если аутентификация успешна:
+                        // Обновляем состояние аутентификации
+                        authState.isAuthenticated = true;
+                        authState.email = request.credentials.email;
+
+                        // Сохраняем состояние в хранилище Chrome
+                        chrome.storage.sync.set({ authState });
+
+                        // Отправляем успешный ответ
+                        sendResponse({
+                            success: true,
+                            email: request.credentials.email
+                        });
+                    } else {
+                        // Если сервер вернул success: false
+                        sendResponse({
+                            success: false,
+                            error: data.message || 'Ошибка аутентификации'
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Обработка ошибок сети или парсинга
+                    console.error('Ошибка аутентификации:', error);
+                    sendResponse({
+                        success: false,
+                        error: error.message || 'Ошибка сети'
+                    });
+                });
+            return true; // Указываем, что ответ будет асинхронным
+
 
         case "checkAuth":         // Проверка состояния аутентификации
             sendResponse({
@@ -201,3 +296,6 @@ chrome.runtime.onStartup.addListener(() => {
         VPNManager.updateUI();               // Обновление иконки
     });
 });
+
+
+

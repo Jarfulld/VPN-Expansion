@@ -87,39 +87,44 @@ document.addEventListener('DOMContentLoaded', function () {
         authSection.style.display = 'block';
     });
 
-    // Обработчик отправки формы входа
     submitLogin.addEventListener('click', function () {
-        // Получаем значения из формы
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        // Проверяем заполнение полей
         if (!email || !password) {
             alert('Пожалуйста, заполните все поля');
             return;
         }
 
-        // Показываем индикатор загрузки
         loadingElement.style.display = 'block';
         loadingElement.textContent = 'Входим в аккаунт...';
 
-        // Отправляем данные для аутентификации в фоновый скрипт
+        // Отправляем данные для аутентификации в фоновый скрипт 
         chrome.runtime.sendMessage({
             action: "authenticate",
             credentials: { email, password }
         }, (response) => {
             loadingElement.style.display = 'none';
 
-            if (/*response.success*/ email == "sergdorn@inbox.ru") {
-                console.log("Вход в аккаунт");
-                // Успешная аутентификация - обновляем состояние и UI
+            if (response && response.success) {
+                // Успешная аутентификация
                 isAuthenticated = true;
-                userEmail.textContent = email;
+                userEmail.textContent = response.email || email;
                 userInfo.style.display = 'block';
                 loginForm.style.display = 'none';
                 authSection.style.display = 'none';
+
+                // Обновляем статус VPN после успешной авторизации
+                chrome.runtime.sendMessage({ action: "getStatus" }, (statusResponse) => {
+                    if (statusResponse) {
+                        isActive = statusResponse.status;
+                        updateUI(isActive);
+                    }
+                });
             } else {
-                alert('Ошибка авторизации');
+                // Ошибка аутентификации
+                const errorMessage = response?.error || 'Неизвестная ошибка авторизации';
+                alert(`Ошибка авторизации: ${errorMessage}`);
             }
         });
     });
