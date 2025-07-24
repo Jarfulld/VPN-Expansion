@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadingElement = document.getElementById('loading'); // Элемент загрузки
     const userInfo = document.getElementById('userInfo'); // Секция информации о пользователе
     const userEmail = document.getElementById('userEmail'); // Поле для отображения email пользователя
+    const paymentBtn = document.getElementById('paymentBtn'); // Кнопка оплаты
 
     // Состояние приложения
     let isActive = false; // Статус VPN (включен/выключен)
@@ -52,6 +53,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Обработчик клика по кнопке регистрации - открывает страницу регистрации в новой вкладке
     registerBtn.addEventListener('click', function () {
         chrome.tabs.create({ url: 'https://barbarisvpn.online/registration' });
+    });
+
+    // Обработчик клика по кнопке оплаты
+    paymentBtn.addEventListener('click', function () {
+        chrome.tabs.create({ url: 'https://barbarisvpn.online' });
     });
 
     // Обработчик клика по кнопке выхода

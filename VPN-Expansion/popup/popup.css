@@ -289,3 +289,14 @@ h2 {
  #logoutBtn:hover {
     background-color: #d33426; /* Темно-красный фон */
  }
+
+/* Стили для кнопки оплаты */
+#paymentBtn {
+    background-color: #34a853; /* Зеленый фон */
+    color: white; /* Белый текст */
+}
+
+/* Стили при наведении на кнопку оплаты */
+#paymentBtn:hover {
+    background-color: #2d8e47; /* Темно-зеленый фон */
+}
