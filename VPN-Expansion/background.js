@@ -2,7 +2,7 @@
 const SERVER_CONFIG = {
     name: "Netherlands",          // Название сервера
     address: "185.184.122.74",    // IP-адрес сервера
-    port: 1000,                   // Порт для подключения
+    port: 443,   /*1000*/                 // Порт для подключения
     scheme: 'socks5'              // Протокол подключения (SOCKS5)
 };
 
@@ -33,49 +33,66 @@ let vpnState = {                  // Объект для хранения сос
 
 let authState = {                 // Объект для хранения состояния аутентификации
     isAuthenticated: false,       // Флаг аутентификации пользователя
-    email: ""                     // Email пользователя
+    email: "",                    // Email пользователя
+    token: ""                     // Токен аутентификации
 };
 
 // Инициализация расширения при установке
 chrome.runtime.onInstalled.addListener(() => {
     console.log('VPN Barbaris инициализирован');
-    // Установка начальных значений в хранилище
-    chrome.storage.sync.set({
-        vpnStatus: false,         // Статус VPN по умолчанию: выключен
-        authState: {              // Начальное состояние аутентификации
+    // Установка начальных значений в локальное хранилище (сохраняется между сессиями)
+    chrome.storage.local.set({
+        vpnStatus: false,
+        authState: {
             isAuthenticated: false,
-            email: ""
+            email: "",
+            token: ""
         }
     });
 });
 
+// Функция для аутентификации пользователя на сервере
 async function authenticateWithServer(email, password) {
-    // Формируем запрос к серверу аутентификации
-    const response = await fetch('http://185.184.122.25:5000/auth_auth', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json', // Указываем тип содержимого
-        },
-        // Формируем тело запроса в формате JSON
-        body: JSON.stringify({
-            email: email,
-            password: password
-        })
+    const requestBody = JSON.stringify({
+        email: email,
+        password: password
     });
 
-    // Проверяем статус ответа сервера
-    if (!response.ok) {
-        throw new Error(`Ошибка! Статус: ${response.status}`);
+    try {
+        const response = await fetch('http://185.184.122.25:5000/auth_auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: requestBody
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Ошибка HTTP! Статус: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.hasOwnProperty('success')) {
+            throw new Error('Некорректный формат ответа сервера');
+        }
+
+        // Если сервер возвращает токен, сохраняем его
+        if (data.token) {
+            authState.token = data.token;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Ошибка при аутентификации:', error);
+        throw error;
     }
-
-    // Парсим JSON ответ сервера
-    return await response.json();
 }
-
 
 // Функция для аутентификации пользователя на сервере
 async function authenticateWithServer(email, password) {
-    // Формируем тело запроса в формате JSON, как указано в требованиях
+    // Формируем тело запроса в формате JSON
     const requestBody = JSON.stringify({
         email: email,
         password: password
@@ -91,14 +108,15 @@ async function authenticateWithServer(email, password) {
             body: requestBody // Передаем сформированное тело запроса
         });
 
-        // Проверяем статус ответа сервера
+        // Проверяем статус ответа
         if (!response.ok) {
-            // Если сервер вернул ошибку, пытаемся получить сообщение об ошибке из ответа
+            // Если ответ не успешный, пытаемся получить ошибку из тела ответа
             const errorData = await response.json();
+            // Генерируем ошибку с сообщением от сервера или стандартным HTTP-сообщением
             throw new Error(errorData.message || `Ошибка HTTP! Статус: ${response.status}`);
         }
 
-        // Парсим JSON ответ сервера
+        // Парсим успешный ответ сервера в формате JSON
         const data = await response.json();
 
         // Проверяем наличие обязательного поля 'success' в ответе
@@ -106,49 +124,65 @@ async function authenticateWithServer(email, password) {
             throw new Error('Некорректный формат ответа сервера');
         }
 
-        // Возвращаем данные для обработки в вызывающем коде
+        // Если сервер возвращает токен, сохраняем его в глобальном состоянии аутентификации
+        if (data.token) {
+            authState.token = data.token; // Предполагается, что authState определен где-то в коде
+        }
+
+        // Возвращаем данные ответа для дальнейшей обработки
         return data;
     } catch (error) {
+        // Логируем ошибку в консоль
         console.error('Ошибка при аутентификации:', error);
-        throw error; // Пробрасываем ошибку дальше для обработки в вызывающем коде
+        // Пробрасываем ошибку дальше для обработки в вызывающем коде
+        throw error;
     }
 }
 
 // Обработчик сообщений между компонентами расширения
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    switch (request.action) {     // Обработка различных действий
-        case "toggle":            // Переключение состояния VPN
+    // Используем switch для обработки разных типов действий (actions)
+    switch (request.action) {
+        // Действие для включения/выключения VPN
+        case "toggle":
+            // Вызываем функцию toggleVPN и возвращаем текущий статус
             toggleVPN().then(status => sendResponse({ status }));
-            return true;          // Возврат true для асинхронного ответа
+            // Возвращаем true для указания, что ответ будет отправлен асинхронно
+            return true;
 
-        case "getStatus":         // Получение текущего статуса VPN
+        // Действие для получения текущего статуса VPN
+        case "getStatus":
+            // Отправляем текущее состояние VPN (включен/выключен)
             sendResponse({ status: vpnState.isActive });
             break;
 
-        case "getServerInfo":    // Получение информации о сервере
+        // Действие для получения информации о сервере
+        case "getServerInfo":
+            // Отправляем конфигурацию сервера клиенту
             sendResponse({ server: SERVER_CONFIG });
             break;
 
+        // Действие для аутентификации пользователя
         case "authenticate":
-            // Обработка запроса на аутентификацию
+            // Вызываем функцию аутентификации с переданными учетными данными
             authenticateWithServer(request.credentials.email, request.credentials.password)
                 .then(data => {
                     if (data.success) {
-                        // Если аутентификация успешна:
-                        // Обновляем состояние аутентификации
+                        // Если аутентификация успешна, обновляем состояние
                         authState.isAuthenticated = true;
                         authState.email = request.credentials.email;
 
-                        // Сохраняем состояние в хранилище Chrome
-                        chrome.storage.sync.set({ authState });
-
-                        // Отправляем успешный ответ
-                        sendResponse({
-                            success: true,
-                            email: request.credentials.email
+                        // Сохраняем состояние в локальное хранилище Chrome
+                        chrome.storage.local.set({ authState }, () => {
+                            // Отправляем успешный ответ с данными пользователя
+                            sendResponse({
+                                success: true,
+                                email: request.credentials.email,
+                                token: data.token || null
+                            });
                         });
                     } else {
-                        // Если сервер вернул success: false
+                        // Если аутентификация не удалась, отправляем сообщение об ошибке
                         sendResponse({
                             success: false,
                             error: data.message || 'Ошибка аутентификации'
@@ -156,45 +190,76 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     }
                 })
                 .catch(error => {
-                    // Обработка ошибок сети или парсинга
+                    // Обрабатываем ошибки при аутентификации
                     console.error('Ошибка аутентификации:', error);
                     sendResponse({
                         success: false,
                         error: error.message || 'Ошибка сети'
                     });
                 });
-            return true; // Указываем, что ответ будет асинхронным
+            // Указываем, что ответ будет асинхронным
+            return true;
 
-
-        case "checkAuth":         // Проверка состояния аутентификации
-            sendResponse({
-                authenticated: authState.isAuthenticated,
-                email: authState.email
-            });
+        // Действие для проверки аутентификации пользователя
+        case "checkAuth":
+            // Проверяем наличие токена в состоянии
+            if (authState.token) {
+                // Если токен есть, проверяем его валидность
+                validateToken(authState.token).then(isValid => {
+                    if (!isValid) {
+                        // Если токен недействителен, сбрасываем состояние аутентификации
+                        authState.isAuthenticated = false;
+                        authState.email = "";
+                        authState.token = "";
+                        chrome.storage.local.set({ authState });
+                    }
+                    // Отправляем текущее состояние аутентификации
+                    sendResponse({
+                        authenticated: authState.isAuthenticated && isValid,
+                        email: authState.email,
+                        token: authState.token
+                    });
+                });
+                // Указываем, что ответ будет асинхронным
+                return true;
+            } else {
+                // Если токена нет, просто отправляем текущее состояние
+                sendResponse({
+                    authenticated: authState.isAuthenticated,
+                    email: authState.email,
+                    token: authState.token
+                });
+            }
             break;
 
-        case "logout":            // Выход из системы
+        // Действие для выхода из системы
+        case "logout":
+            // Сбрасываем состояние аутентификации (но сохраняем email для удобства)
             authState.isAuthenticated = false;
-            authState.email = "";
-            chrome.storage.sync.set({ authState });  // Обновление хранилища
+            authState.token = "";
+            // Сохраняем обновленное состояние в хранилище
+            chrome.storage.local.set({ authState });
 
-            // Всегда пытаемся отключить VPN при выходе
+            // Если VPN был активен, деактивируем его
             if (vpnState.isActive) {
                 VPNManager.deactivate().then(() => {
                     vpnState.isActive = false;
-                    chrome.storage.sync.set({ vpnStatus: false });
+                    // Сохраняем статус VPN
+                    chrome.storage.local.set({ vpnStatus: false });
                     sendResponse({ success: true });
                 }).catch(error => {
                     console.error('Ошибка при отключении VPN:', error);
                     sendResponse({ success: false, error: error.message });
                 });
-                return true; // Для асинхронного ответа
+                return true;
             } else {
+                // Если VPN не был активен, просто подтверждаем выход
                 sendResponse({ success: true });
             }
             break;
 
-        default:                  // Обработка неизвестных действий
+        // Обработка неизвестных действий
+        default:
             console.warn('Неизвестное действие:', request.action);
     }
 });
@@ -218,6 +283,7 @@ const VPNManager = {
                     vpnState.isActive = true;
                     vpnState.lastActivation = new Date();  // Запись времени активации
                     this.updateUI();                       // Обновление иконки
+                    console.log('Обновление иконки');
                     chrome.storage.sync.set({ vpnStatus: true });  // Сохранение статуса
                     console.log(`VPN активирован через ${SERVER_CONFIG.scheme.toUpperCase()}. Сервер: ${SERVER_CONFIG.name} (${SERVER_CONFIG.address}:${SERVER_CONFIG.port})`);
                     resolve(true);
@@ -290,12 +356,40 @@ chrome.storage.onChanged.addListener((changes) => {
 
 // Инициализация состояния при запуске браузера
 chrome.runtime.onStartup.addListener(() => {
-    chrome.storage.sync.get(['vpnStatus', 'authState'], (result) => {
-        vpnState.isActive = result.vpnStatus || false;  // Восстановление статуса VPN
-        authState = result.authState || { isAuthenticated: false, email: "" };  // Восстановление состояния аутентификации
-        VPNManager.updateUI();               // Обновление иконки
+    chrome.storage.local.get(['vpnStatus', 'authState'], (result) => {
+        vpnState.isActive = result.vpnStatus || false;
+
+        // Восстанавливаем состояние аутентификации из локального хранилища
+        authState = result.authState || {
+            isAuthenticated: false,
+            email: "",
+            token: ""
+        };
+
+        // Если есть токен, проверяем его валидность
+        if (authState.token) {
+            validateToken(authState.token).then(isValid => {
+                if (!isValid) {
+                    authState.isAuthenticated = false;
+                    authState.token = "";
+                    chrome.storage.local.set({ authState });
+                } else {
+                    authState.isAuthenticated = true;
+                }
+                VPNManager.updateUI();
+            });
+        } else {
+            VPNManager.updateUI();
+        }
     });
 });
 
+
+// Также добавляем обработчик для события chrome.runtime.onStartup
+chrome.runtime.onStartup.addListener(() => {
+    console.log('Расширение запущено после перезагрузки браузера');
+    // Проверяем аутентификацию при старте
+    chrome.runtime.sendMessage({ action: "checkAuth" });
+});
 
 

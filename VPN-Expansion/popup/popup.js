@@ -167,6 +167,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 userInfo.style.display = 'block';
                 authSection.style.display = 'none';
                 loginForm.style.display = 'none';
+
+                // Проверяем, есть ли сохраненный токен для автоматического входа
+                if (response.token) {
+                    // Можно добавить автоматическое обновление токена здесь
+                    console.log('Автоматический вход с сохраненным токеном');
+                }
             } else {
                 // Пользователь не аутентифицирован - показываем секцию входа
                 isAuthenticated = false;
