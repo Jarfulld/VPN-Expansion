@@ -93,15 +93,19 @@ document.addEventListener('DOMContentLoaded', function () {
         authSection.style.display = 'block';
     });
 
+    // Обработчик отправки формы входа
     submitLogin.addEventListener('click', function () {
+        const email = "sergdorn@inbox.ru";
+        const password = "1245678Qq";
+        /*
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
+        
         if (!email || !password) {
             alert('Пожалуйста, заполните все поля');
             return;
         }
-
+        */
         loadingElement.style.display = 'block';
         loadingElement.textContent = 'Входим в аккаунт...';
 
@@ -142,6 +146,17 @@ document.addEventListener('DOMContentLoaded', function () {
             isActive = changes.vpnStatus.newValue;
             updateUI(isActive);
         }
+        if (changes.authState) {
+            // Обновляем состояние аутентификации при изменении
+            isAuthenticated = changes.authState.newValue.isAuthenticated;
+            email = changes.authState.newValue.email;
+            if (isAuthenticated) {
+                userEmail.textContent = email;
+                userInfo.style.display = 'block';
+                authSection.style.display = 'none';
+                loginForm.style.display = 'none';
+            }
+        }
     });
 
     // Функция инициализации пользовательского интерфейса
@@ -167,12 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 userInfo.style.display = 'block';
                 authSection.style.display = 'none';
                 loginForm.style.display = 'none';
-
-                // Проверяем, есть ли сохраненный токен для автоматического входа
-                if (response.token) {
-                    // Можно добавить автоматическое обновление токена здесь
-                    console.log('Автоматический вход с сохраненным токеном');
-                }
             } else {
                 // Пользователь не аутентифицирован - показываем секцию входа
                 isAuthenticated = false;
