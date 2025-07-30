@@ -2,9 +2,9 @@
 body {
     width: 250px; /* Фиксированная ширина окна */
     padding: 15px; /* Внутренние отступы */
-    font-family: 'Segoe UI', Arial, sans-serif; /* Основной шрифт */
+    font-family: Courier New; /* Основной шрифт */
     text-align: center; /* Выравнивание текста по центру */
-    background-color: #f9f9f9; /* Цвет фона */
+    background-color: #0f0225; /* Цвет фона */
     margin: 0; /* Убираем внешние отступы */
 }
 
@@ -17,18 +17,33 @@ body {
 }
 
 /* Стили для логотипа */
-.logo {
-    width: 32px; /* Ширина логотипа */
-    height: 32px; /* Высота логотипа */
+.pixpic {
+    width: 100px; /* Ширина логотипа */
+    height: 100px; /* Высота логотипа */
     margin-right: 10px; /* Отступ справа от логотипа */
 }
+.pixlogo {
+	width: 200px;
+	height: 100px;
+	image-rendering: pixalated;
+}
 
-/* Стили для заголовка */
-h2 {
-    color: #333; /* Цвет текста */
-    font-size: 18px; /* Размер шрифта */
-    margin: 0; /* Убираем отступы */
-    font-weight: 600; /* Жирность шрифта */
+.main-container {
+  display: flex;
+  gap: 15px;
+}
+
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* Общие стили для кнопки переключения */
@@ -41,7 +56,11 @@ h2 {
     cursor: pointer; /* Курсор-указатель */
     margin-bottom: 15px; /* Отступ снизу */
     transition: all 0.3s ease; /* Плавные анимации */
-    font-size: 14px; /* Размер шрифта */
+		font-family: '印品鸿蒙体';
+		src: url('fonts/印品鸿蒙体.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
+    font-size: 13px; /* Размер шрифта */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Тень кнопки */
 }
 
@@ -54,40 +73,52 @@ h2 {
 
 /* Стили для включенного состояния кнопки */
 .toggle-btn.on {
-    background-color: #4CAF50; /* Зеленый фон */
+    background-color: #237216; /* Зеленый фон */
     color: white; /* Белый текст */
 }
 
 /* Стили при наведении на включенную кнопку */
 .toggle-btn.on:hover:not(:disabled) {
-    background-color: #3e8e41; /* Темно-зеленый фон */
+    background-color: #1b4f12; /* Темно-зеленый фон */
 }
 
 /* Стили для выключенного состояния кнопки */
 .toggle-btn.off {
-    background-color: #f44336; /* Красный фон */
+    background-color: #971d2f; /* Красный фон */
     color: white; /* Белый текст */
 }
 
 /* Стили при наведении на выключенную кнопку */
 .toggle-btn.off:hover:not(:disabled) {
-    background-color: #d32f2f; /* Темно-красный фон */
+    background-color: #55111a; /* Темно-красный фон */
 }
 
 /* Стили для блока с информацией о сервере */
+/* Правая колонка (сервер или форма) */
 .server-info {
-    background-color: #ffffff; /* Белый фон */
-    padding: 12px; /* Внутренние отступы */
-    border-radius: 6px; /* Закругленные углы */
-    margin-bottom: 15px; /* Отступ снизу */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Легкая тень */
-    text-align: left; /* Текст выровнен по левому краю */
+  flex: 1;
+  background-color: #000000;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  text-align: left;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Форма входа изначально скрыта */
+.login-form {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* Стили для абзацев в блоке server-info */
 .server-info p {
     margin: 5px 0; /* Отступы сверху и снизу */
-    color: #555; /* Цвет текста */
+    color: #ff0025; /* Цвет текста */
     font-size: 13px; /* Размер шрифта */
 }
 
@@ -138,14 +169,14 @@ h2 {
 }
 
 /* Адаптивные стили для маленьких экранов */
-@media (max-width: 280px) {
+@media (max-width: 400px) {
     body {
         padding: 10px; /* Уменьшаем отступы */
-        width: 220px; /* Уменьшаем ширину */
+        width: 350px; /* Уменьшаем ширину */
     }
 
     h2 {
-        font-size: 16px; /* Уменьшаем размер шрифта */
+        font-size: 13px; /* Уменьшаем размер шрифта */
     }
 }
 
@@ -153,26 +184,31 @@ h2 {
 .auth-btn {
     width: 100%; /* Занимает всю ширину */
     padding: 10px; /* Внутренние отступы */
-    margin-bottom: 10px; /* Отступ снизу */
-    background-color: #4285f4; /* Синий фон */
+    margin-bottom: 15px; /* Отступ снизу */
+    background-color: #1f1772; /* Синий фон */
     color: white; /* Белый текст */
     border: none; /* Убираем границу */
     border-radius: 4px; /* Закругленные углы */
     cursor: pointer; /* Курсор-указатель */
     font-weight: bold; /* Жирный текст */
     transition: background-color 0.3s; /* Плавное изменение фона */
+		font-family: '印品鸿蒙体';
+		src: url('fonts/印品鸿蒙体.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
+		font-size: 13px;
 }
 
 /* Стили при наведении на кнопку авторизации */
 .auth-btn:hover {
-    background-color: #3367d6; /* Темно-синий фон */
+    background-color: #16124d; /* Темно-синий фон */
 }
 
 /* Стили для ссылки в форме авторизации */
 .auth-link {
     display: block; /* Блочное отображение */
     text-align: center; /* Выравнивание по центру */
-    color: #4285f4; /* Синий цвет */
+    color: #1f1772; /* Синий цвет */
     text-decoration: none; /* Убираем подчеркивание */
     margin-bottom: 15px; /* Отступ снизу */
     font-size: 13px; /* Размер шрифта */
@@ -181,11 +217,6 @@ h2 {
 /* Стили при наведении на ссылку */
 .auth-link:hover {
     text-decoration: underline; /* Подчеркивание при наведении */
-}
-
-/* Стили для формы входа */
-.login-form {
-    margin-top: 10px; /* Отступ сверху */
 }
 
 /* Стили для группы элементов формы */
@@ -205,7 +236,7 @@ h2 {
 /* Стили для кнопки отправки формы */
 .submit-btn {
     background-color: #34a853; /* Зеленый фон */
-    margin-top: 5px; /* Отступ сверху */
+    margin-top: 10px; /* Отступ сверху */
 }
 
 /* Стили при наведении на кнопку отправки */
@@ -215,13 +246,13 @@ h2 {
 
 /* Стили для кнопки "Назад" */
 .back-btn {
-    background-color: #fbbc05; /* Желтый фон */
-    margin-top: 5px; /* Отступ сверху */
+    background-color: #adb219; /* Желтый фон */
+    margin-top: 10px; /* Отступ сверху */
 }
 
 /* Стили при наведении на кнопку "Назад" */
 .back-btn:hover {
-    background-color: #e6ac00; /* Темно-желтый фон */
+    background-color: #7a7d0c; /* Темно-желтый фон */
 }
 
 /* Стили для ссылки "Забыли пароль" */
@@ -241,13 +272,13 @@ h2 {
 
 /* Стили для кнопки регистрации */
 .register-btn {
-    background-color: #fbbc05; /* Желтый фон */
+    background-color: #adb219; /* Желтый фон */
     margin-top: 8px; /* Отступ сверху */
 }
 
 /* Стили при наведении на кнопку регистрации */
 .register-btn:hover {
-    background-color: #e6ac00; /* Темно-желтый фон */
+    background-color: #7a7d0c; /* Темно-желтый фон */
 }
 
 /* Стили для кнопок авторизации, идущих друг за другом */

@@ -1,45 +1,27 @@
 {
-  // Версия манифеста для Chrome Extensions
-  "manifest_version": 3,
-
-  // Название расширения, отображаемое в магазине и интерфейсе браузера
+  "manifest_version": 2,
   "name": "VPN Barbaris",
-
-  // Версия расширения (формат semver)
   "version": "1.0",
-
-  // Описание функциональности расширения
   "description": "Быстрый и безопасный VPN",
-
-  // Набор иконок разных размеров для различных мест в интерфейсе
   "icons": {
-    "16": "assets/icon16.png", // Для контекстного меню и маленьких элементов
-    "32": "assets/icon32.png", // Для панели задач Windows
-    "48": "assets/icon48.png", // Для страницы расширений
-    "128": "assets/icon128.png" // Для магазина 
+    "16": "assets/Icon16Off.png",
+    "32": "assets/Icon32Off.png"
   },
-
-  // Список разрешений, необходимых для работы расширения
   "permissions": [
-    "proxy", // Для управления прокси-настройками браузера
-    "storage", // Для сохранения данных между сессиями
-    "webRequest", // Для перехвата и модификации сетевых запросов
-    "webRequestAuthProvider", // Для работы с аутентификацией в запросах
-    "notifications" // Для показа уведомлений пользователю
+    "proxy",
+    "storage",
+    "webRequest",
+    "webRequestAuthProvider",
+    "notifications"
   ],
-
-  // Фоновый скрипт (service worker), который работает постоянно
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"]
   },
-
-  // Настройки кнопки расширения в тулбаре браузера
-  "action": {
-    "default_popup": "popup/popup.html", // HTML-файл попапа
-    "default_icon": { // Иконки для кнопки
-      "16": "assets/icon16.png",
-      "32": "assets/icon32.png",
-      "48": "assets/icon48.png"
+  "browser_action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/Icon16Off.png",
+      "32": "assets/Icon32Off.png"
     }
   }
 }

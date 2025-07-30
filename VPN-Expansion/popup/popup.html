@@ -7,40 +7,42 @@
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <div class="header">
-        <img src="../assets/icon48.png" class="logo" alt="VPN Barbaris">
-        <h2>VPN Barbaris</h2>
+   <div class="header">
+        <img src="../assets/PicPixOff.png" class="pixpic" alt="VPN Barbaris">
+        <img src="../assets/BarbarisVPNExtension.png" class="pixlogo" alt="VPN Barbaris">
     </div>
-
-    <button id="toggleBtn" class="toggle-btn off">Подключиться</button>
-
-    <div class="server-info">
-        <p><strong>Сервер:</strong> Netherlands</p>
-        <p id="statusText">Статус: Отключён</p>
-        <p id="userInfo" style="display: none;">
-            <strong>Аккаунт:</strong> <span id="userEmail"></span>
-            <button id="paymentBtn" class="auth-btn" style="margin-top: 5px; width: 100%; background-color: #34a853;">Оплата</button>
-            <button id="logoutBtn" class="auth-btn" style="margin-top: 5px; width: 100%;">Выйти</button>
-        </p>
-    </div>
-
-    <div id="authSection">
-        <button id="loginBtn" class="auth-btn">Войти в аккаунт</button>
-        <button id="registerBtn" class="auth-btn register-btn">Зарегистрироваться</button>
-    </div>
-
-    <div id="loginForm" class="login-form" style="display: none;">
-        <div class="form-group">
-            <input type="email" id="email" placeholder="Ваш email" required>
+    
+    <div class="main-container">
+        <!-- Левая колонка (может быть либо кнопками, либо формой входа) -->
+        <div id="leftColumn" class="left-column">
+            <div id="buttonColumn" class="button-column">
+                <button id="toggleBtn" class="toggle-btn off">Подключиться</button>
+                
+                <div id="authSection">
+                    <button id="loginBtn" class="auth-btn">Войти в аккаунт</button>
+                    <button id="registerBtn" class="auth-btn register-btn">Регистрация</button>
+                </div>
+            </div>
+            
+            <div id="loginForm" class="login-form" style="display: none;">
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Ваш email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Ваш пароль" required>
+                </div>
+                <button id="submitLogin" class="auth-btn submit-btn">Войти</button>
+                <button id="backBtn" class="auth-btn back-btn">Назад</button>
+                <a href="https://barbarisvpn.online/changePassword/" target="_blank" class="forgot-password">
+                    Забыли пароль?
+                </a>
+            </div>
         </div>
-        <div class="form-group">
-            <input type="password" id="password" placeholder="Ваш пароль" required>
+        
+        <!-- Правая колонка с информацией о сервере -->
+        <div id="serverInfo" class="server-info">
+            <p id="statusText">Не выполнен вход в аккаунт</p>
         </div>
-        <button id="submitLogin" class="auth-btn submit-btn">Войти</button>
-        <a href="https://barbarisvpn.online/changePassword/" target="_blank" class="forgot-password">
-            Забыли пароль?
-        </a>
-        <button id="backBtn" class="auth-btn back-btn">Назад</button>
     </div>
 
     <div id="loading" class="loading" style="display: none;"></div>

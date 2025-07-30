@@ -229,9 +229,8 @@ const VPNManager = {
     updateUI: function () {
         chrome.action.setIcon({
             path: {
-                "16": `assets/icon16.png`,  // Иконка 16x16
-                "32": `assets/icon32.png`,  // Иконка 32x32
-                "48": `assets/icon48.png`   // Иконка 48x48
+                "16": `assets/Icon16Off.png`,  // Иконка 16x16
+                "32": `assets/Icon32Off.png`,  // Иконка 32x32
             }
         });
     }
